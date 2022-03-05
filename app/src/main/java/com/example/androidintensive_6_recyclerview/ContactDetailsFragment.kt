@@ -11,10 +11,8 @@ import androidx.fragment.app.Fragment
 
 class ContactDetailsFragment: Fragment(R.layout.fragment_contact_details) {
 
-    private lateinit var bundle: Bundle
-    private lateinit var contactID: String
+    private var contactID: Int = -1
     private lateinit var contactDetails: List<EditText>
-    private lateinit var contactsInfoToBundle: MutableList<List<ContactInfo>>
     private lateinit var saveButtonClickListener: SaveButtonClickListener
 
     override fun onAttach(context: Context) {
@@ -27,22 +25,19 @@ class ContactDetailsFragment: Fragment(R.layout.fragment_contact_details) {
 
         (activity as AppCompatActivity).title = "Contact details"
 
-        contactsInfoToBundle = mutableListOf()
-        contactID = requireArguments().getString(CONTACT_ID).toString()
-        bundle = bundleOf(CONTACT_DETAILS_FRAGMENT_TAG to contactsInfoToBundle)
+        contactID = requireArguments().getInt(CONTACT_ID)
 
         contactDetails = listOf(
-            view.findViewById(R.id.name_text),
+            view.findViewById(R.id.contact_name_text),
             view.findViewById(R.id.last_name_text),
             view.findViewById(R.id.phone_number_text)
         )
 
         // Gets contact info from bundle
-        requireArguments().getBundle(CONTACT_INFO)?.get(CONTACTS_FRAGMENT_TAG).also { contactsList ->
-            contactsList as List<List<ContactInfo>>
+        requireArguments().getBundle(CONTACT_INFO)?.get(CONTACT_ADAPTER_TAG).also { contactList ->
+            contactList as List<ContactInfo>
 
-            getContactsInfoFromBundle(contactsList)
-            onSaveButtonClickListener(contactsList)
+            getContactInfoFromBundle(contactList)
         }
 
         // Edit button
@@ -57,83 +52,58 @@ class ContactDetailsFragment: Fragment(R.layout.fragment_contact_details) {
                 }
             }
         }
-    }
 
-    private fun prepareContactNewInfo(contactsList: List<List<ContactInfo>>) {
-        contactsList.forEach { list ->
-            list.forEach { contactInfoObject ->
-                val contactInfo = ContactInfo()
-                if (contactInfoObject.contactID == contactID) {
-                    contactDetails.forEach { editText ->
-                        when (editText.transitionName) {
-                            NAME -> contactInfo.name = editText.text.toString()
-                            LAST_NAME -> contactInfo.lastName = editText.text.toString()
-                            PHONE_NUMBER -> contactInfo.phoneNumber = editText.text.toString()
-                        }
-                        contactInfo.contactID = contactID
-                    }
-                    contactsInfoToBundle.add(listOf(contactInfo))
-                } else {
-                    contactInfo.name = contactInfoObject.name
-                    contactInfo.lastName = contactInfoObject.lastName
-                    contactInfo.phoneNumber = contactInfoObject.phoneNumber
-                    contactInfo.contactID = contactInfoObject.contactID
-                    contactsInfoToBundle.add(listOf(contactInfo))
-                }
-            }
-        }
-    }
-
-    private fun getContactsInfoFromBundle(contactsList: List<List<ContactInfo>>) {
-        contactsList.forEach { list ->
-            list.forEach { contactInfo ->
-                if (contactInfo.contactID == contactID) {
-                    contactDetails.forEach { editText ->
-                        when (editText.transitionName) {
-                            NAME -> editText.setText(contactInfo.name)
-                            LAST_NAME -> editText.setText(contactInfo.lastName)
-                            PHONE_NUMBER -> editText.setText(contactInfo.phoneNumber)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun onSaveButtonClickListener(contactsList: List<List<ContactInfo>>) {
+        // Save button
         requireView().findViewById<Button>(R.id.save_button).also { saveButton ->
             saveButton.setOnClickListener {
+                val contactList = mutableListOf<ContactInfo>()
+                val contact = ContactInfo()
                 contactDetails.forEach { editText ->
                     when (editText.transitionName) {
                         NAME -> {
                             editText.text = editText.text
+                            contact.name = editText.text.toString()
                         }
                         LAST_NAME -> {
                             editText.text = editText.text
+                            contact.lastName = editText.text.toString()
                         }
                         PHONE_NUMBER -> {
                             editText.text = editText.text
+                            contact.phoneNumber = editText.text.toString()
                         }
                     }
                 }
-                prepareContactNewInfo(contactsList)
-                saveButtonClickListener.onSaveButtonClicked(bundle)
+                contactList.add(contact)
+                val bundle = bundleOf(CONTACT_DETAILS_FRAGMENT_TAG to contactList)
+                saveButtonClickListener.onSaveButtonClicked(contactID, bundle)
             }
         }
     }
 
+    private fun getContactInfoFromBundle(contactList: List<ContactInfo>) {
+        contactList.forEach { contact ->
+            contactDetails.forEach { editText ->
+                when (editText.transitionName) {
+                    NAME -> editText.setText(contact.name)
+                    LAST_NAME -> editText.setText(contact.lastName)
+                    PHONE_NUMBER -> editText.setText(contact.phoneNumber)
+                }
+            }
+        }
+    }
 
     interface SaveButtonClickListener {
-        fun onSaveButtonClicked(bundle: Bundle)
+        fun onSaveButtonClicked(position: Int, bundle: Bundle)
     }
 
     companion object {
         private const val CONTACT_ID = "CONTACT_ID"
         private const val CONTACT_INFO = "CONTACT_INFO"
-        fun newInstance(bundle: Bundle, contactID: String) = ContactDetailsFragment().also {
+        fun newInstance(position: Int, bundle: Bundle) = ContactDetailsFragment().also {
             it.arguments = Bundle().apply {
+                putInt(CONTACT_ID, position)
                 putBundle(CONTACT_INFO, bundle)
-                putString(CONTACT_ID, contactID)
             }
         }
     }

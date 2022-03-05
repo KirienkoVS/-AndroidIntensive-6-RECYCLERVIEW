@@ -3,7 +3,7 @@ package com.example.androidintensive_6_recyclerview
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity: AppCompatActivity(), ContactsFragment.ContactClickListener, ContactDetailsFragment.SaveButtonClickListener {
+class MainActivity: AppCompatActivity(), ContactDetailsFragment.SaveButtonClickListener, ContactAdapter.ContactClicked {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -11,26 +11,18 @@ class MainActivity: AppCompatActivity(), ContactsFragment.ContactClickListener, 
 
         if (supportFragmentManager.findFragmentByTag(CONTACTS_FRAGMENT_TAG) == null) {
             supportFragmentManager.beginTransaction().run {
-                replace(R.id.fragment_container, ContactsFragment.newInstance(Bundle()), CONTACTS_FRAGMENT_TAG)
+                replace(R.id.fragment_container, ContactsFragment.newInstance(-1, Bundle()), CONTACTS_FRAGMENT_TAG)
                 addToBackStack(CONTACTS_FRAGMENT_TAG)
                 commit()
             }
         }
     }
 
-    override fun onContactClicked(bundle: Bundle, contactID: String) {
-        supportFragmentManager.beginTransaction().run {
-            replace(R.id.fragment_container, ContactDetailsFragment.newInstance(bundle, contactID), CONTACT_DETAILS_FRAGMENT_TAG)
-            addToBackStack(CONTACT_DETAILS_FRAGMENT_TAG)
-            commit()
-        }
-    }
-
-    override fun onSaveButtonClicked(bundle: Bundle) {
+    override fun onSaveButtonClicked(position: Int, bundle: Bundle) {
         supportFragmentManager.apply {
             popBackStack()
             beginTransaction().run {
-                replace(R.id.fragment_container, ContactsFragment.newInstance(bundle), CONTACTS_FRAGMENT_TAG)
+                replace(R.id.fragment_container, ContactsFragment.newInstance(position, bundle), CONTACTS_FRAGMENT_TAG)
                 commit()
             }
         }
@@ -40,5 +32,13 @@ class MainActivity: AppCompatActivity(), ContactsFragment.ContactClickListener, 
        if (supportFragmentManager.backStackEntryCount > 1) {
            supportFragmentManager.popBackStack()
        } else finish()
+    }
+
+    override fun onContactClicked(position: Int, bundle: Bundle) {
+        supportFragmentManager.beginTransaction().run {
+            replace(R.id.fragment_container, ContactDetailsFragment.newInstance(position, bundle), CONTACT_DETAILS_FRAGMENT_TAG)
+            addToBackStack(CONTACT_DETAILS_FRAGMENT_TAG)
+            commit()
+        }
     }
 }

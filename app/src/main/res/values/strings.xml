@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">AndroidIntensive_6_RecyclerView</string>
+    <string name="name">Name:</string>
+    <string name="last_name">Last name:</string>
+    <string name="phone_number">Phone number:</string>
+    <string name="edit_button">Edit</string>
+    <string name="save_button">Save</string>
+    <string name="contact_image">contact_image</string>
 </resources>
