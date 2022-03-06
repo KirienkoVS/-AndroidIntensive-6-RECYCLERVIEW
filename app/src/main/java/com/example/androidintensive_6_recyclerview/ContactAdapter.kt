@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
 class ContactAdapter(
-    private val contactList: List<ContactInfo>,
+    private var contactList: List<ContactInfo>,
     private val context: Context
     ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
