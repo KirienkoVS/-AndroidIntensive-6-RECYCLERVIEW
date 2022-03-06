@@ -44,8 +44,9 @@ class ContactAdapter(
         (holder as ContactViewHolder).bind(contact)
 
         holder.itemView.setOnClickListener {
-            contactToBundle.add(contact)
-//            bundle.clear()
+            contactList.forEach {
+                contactToBundle.add(it)
+            }
             val bundle = bundleOf(CONTACT_ADAPTER_TAG to contactToBundle)
             contactClicked.onContactClicked(position, bundle)
         }

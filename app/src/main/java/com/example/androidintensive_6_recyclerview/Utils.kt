@@ -19,12 +19,13 @@ internal fun readContactFromFile(context: Context): List<ContactInfo> {
             formattedContactList.add(string.replace(" ", "-"))
         }
 
-        formattedContactList.forEach { string ->
+        formattedContactList.forEachIndexed { index, string ->
             val contact = string.split("|")
             contactsList.add(ContactInfo(
                 name = contact[0],
                 lastName = contact[1],
-                phoneNumber = contact[2]
+                phoneNumber = contact[2],
+                contactID = index
             ))
         }
     } catch (e: Exception) {

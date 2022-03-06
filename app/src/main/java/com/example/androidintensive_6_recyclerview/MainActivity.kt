@@ -28,17 +28,17 @@ class MainActivity: AppCompatActivity(), ContactDetailsFragment.SaveButtonClickL
         }
     }
 
-    override fun onBackPressed() {
-       if (supportFragmentManager.backStackEntryCount > 1) {
-           supportFragmentManager.popBackStack()
-       } else finish()
-    }
-
     override fun onContactClicked(position: Int, bundle: Bundle) {
         supportFragmentManager.beginTransaction().run {
             replace(R.id.fragment_container, ContactDetailsFragment.newInstance(position, bundle), CONTACT_DETAILS_FRAGMENT_TAG)
             addToBackStack(CONTACT_DETAILS_FRAGMENT_TAG)
             commit()
         }
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 1) {
+            supportFragmentManager.popBackStack()
+        } else finish()
     }
 }

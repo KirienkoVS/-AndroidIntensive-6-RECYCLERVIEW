@@ -1,6 +1,7 @@
 package com.example.androidintensive_6_recyclerview
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -12,28 +13,25 @@ class ContactsFragment : Fragment(R.layout.fragment_contacts) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d(CONTACTS_FRAGMENT_TAG, "onViewCreated")
 
         (activity as AppCompatActivity).title = "Contacts"
 
         contactID = requireArguments().getInt(CONTACT_ID)
 
         val contactListFromFile = readContactFromFile(requireContext())
-
-        // Gets contact info from bundle
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
         val bundle = requireArguments().getBundle(NEW_CONTACT_INFO)?.get(CONTACT_DETAILS_FRAGMENT_TAG)
 
+        // Gets contact info from bundle
         if (bundle != null) {
-            val contactFromBundle = requireArguments().getBundle(NEW_CONTACT_INFO)?.get(CONTACT_DETAILS_FRAGMENT_TAG) as List<ContactInfo>
-            contactFromBundle.forEach { contact ->
-                contactListFromFile[contactID].name = contact.name
-                contactListFromFile[contactID].lastName = contact.lastName
-                contactListFromFile[contactID].phoneNumber = contact.phoneNumber
-
-            }
+            val contactListFromBundle = bundle as List<ContactInfo>
+            val adapter = ContactAdapter(contactListFromBundle, requireContext())
+            recyclerView.adapter = adapter
+        } else {
+            val adapter = ContactAdapter(contactListFromFile, requireContext())
+            recyclerView.adapter = adapter
         }
-
-        val adapter = ContactAdapter(contactListFromFile, requireContext())
-        view.findViewById<RecyclerView>(R.id.recycler_view).adapter = adapter
     }
 
     companion object {

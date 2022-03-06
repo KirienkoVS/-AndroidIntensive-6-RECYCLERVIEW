@@ -7,6 +7,7 @@ data class ContactInfo(
     var name: String? = null,
     var lastName: String? = null,
     var phoneNumber: String? = null,
+    var contactID: Int? = null,
 ) : Serializable {
     private val randomNumber = Random.nextInt(300)
     val imageUrl = "https://picsum.photos/70?random$randomNumber"

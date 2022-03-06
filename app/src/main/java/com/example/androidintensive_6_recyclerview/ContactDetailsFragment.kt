@@ -34,10 +34,10 @@ class ContactDetailsFragment: Fragment(R.layout.fragment_contact_details) {
         )
 
         // Gets contact info from bundle
-        requireArguments().getBundle(CONTACT_INFO)?.get(CONTACT_ADAPTER_TAG).also { contactList ->
+        val contactListFromBundle = requireArguments().getBundle(CONTACT_INFO)?.get(CONTACT_ADAPTER_TAG).also { contactList ->
             contactList as List<ContactInfo>
 
-            getContactInfoFromBundle(contactList)
+            getContactListInfoFromBundle(contactList)
         }
 
         // Edit button
@@ -56,38 +56,42 @@ class ContactDetailsFragment: Fragment(R.layout.fragment_contact_details) {
         // Save button
         requireView().findViewById<Button>(R.id.save_button).also { saveButton ->
             saveButton.setOnClickListener {
-                val contactList = mutableListOf<ContactInfo>()
-                val contact = ContactInfo()
-                contactDetails.forEach { editText ->
-                    when (editText.transitionName) {
-                        NAME -> {
-                            editText.text = editText.text
-                            contact.name = editText.text.toString()
-                        }
-                        LAST_NAME -> {
-                            editText.text = editText.text
-                            contact.lastName = editText.text.toString()
-                        }
-                        PHONE_NUMBER -> {
-                            editText.text = editText.text
-                            contact.phoneNumber = editText.text.toString()
+                val contactListToBundle = contactListFromBundle as List<ContactInfo>
+                contactListToBundle.forEach { contact ->
+                    contactDetails.forEach { editText ->
+                        if (contact.contactID == contactID) {
+                            when (editText.transitionName) {
+                                NAME -> {
+                                    editText.text = editText.text
+                                    contact.name = editText.text.toString()
+                                }
+                                LAST_NAME -> {
+                                    editText.text = editText.text
+                                    contact.lastName = editText.text.toString()
+                                }
+                                PHONE_NUMBER -> {
+                                    editText.text = editText.text
+                                    contact.phoneNumber = editText.text.toString()
+                                }
+                            }
                         }
                     }
                 }
-                contactList.add(contact)
-                val bundle = bundleOf(CONTACT_DETAILS_FRAGMENT_TAG to contactList)
+                val bundle = bundleOf(CONTACT_DETAILS_FRAGMENT_TAG to contactListToBundle)
                 saveButtonClickListener.onSaveButtonClicked(contactID, bundle)
             }
         }
     }
 
-    private fun getContactInfoFromBundle(contactList: List<ContactInfo>) {
+    private fun getContactListInfoFromBundle(contactList: List<ContactInfo>) {
         contactList.forEach { contact ->
             contactDetails.forEach { editText ->
-                when (editText.transitionName) {
-                    NAME -> editText.setText(contact.name)
-                    LAST_NAME -> editText.setText(contact.lastName)
-                    PHONE_NUMBER -> editText.setText(contact.phoneNumber)
+                if (contact.contactID == contactID) {
+                    when (editText.transitionName) {
+                        NAME -> editText.setText(contact.name)
+                        LAST_NAME -> editText.setText(contact.lastName)
+                        PHONE_NUMBER -> editText.setText(contact.phoneNumber)
+                    }
                 }
             }
         }
