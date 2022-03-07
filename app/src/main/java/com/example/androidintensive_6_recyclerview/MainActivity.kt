@@ -11,18 +11,18 @@ class MainActivity: AppCompatActivity(), ContactDetailsFragment.SaveButtonClickL
 
         if (supportFragmentManager.findFragmentByTag(CONTACTS_FRAGMENT_TAG) == null) {
             supportFragmentManager.beginTransaction().run {
-                replace(R.id.fragment_container, ContactsFragment.newInstance(-1, Bundle()), CONTACTS_FRAGMENT_TAG)
+                replace(R.id.fragment_container, ContactsFragment.newInstance(Bundle()), CONTACTS_FRAGMENT_TAG)
                 addToBackStack(CONTACTS_FRAGMENT_TAG)
                 commit()
             }
         }
     }
 
-    override fun onSaveButtonClicked(position: Int, bundle: Bundle) {
+    override fun onSaveButtonClicked(bundle: Bundle) {
         supportFragmentManager.apply {
             popBackStack()
             beginTransaction().run {
-                replace(R.id.fragment_container, ContactsFragment.newInstance(position, bundle), CONTACTS_FRAGMENT_TAG)
+                replace(R.id.fragment_container, ContactsFragment.newInstance(bundle), CONTACTS_FRAGMENT_TAG)
                 commit()
             }
         }

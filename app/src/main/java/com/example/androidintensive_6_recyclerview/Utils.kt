@@ -5,7 +5,7 @@ import android.util.Log
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-internal fun readContactFromFile(context: Context): List<ContactInfo> {
+internal fun readContactFromFile(context: Context): MutableList<ContactInfo> {
 
     val contactsList = mutableListOf<ContactInfo>()
 
@@ -24,8 +24,7 @@ internal fun readContactFromFile(context: Context): List<ContactInfo> {
             contactsList.add(ContactInfo(
                 name = contact[0],
                 lastName = contact[1],
-                phoneNumber = contact[2],
-                contactID = index
+                phoneNumber = contact[2]
             ))
         }
     } catch (e: Exception) {

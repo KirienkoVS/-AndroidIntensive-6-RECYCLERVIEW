@@ -12,12 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 
 class ContactsFragment : Fragment(R.layout.fragment_contacts) {
 
-    private var contactID: Int = -1
     private var isBundleEmpty: Boolean = false
     private lateinit var recyclerView: RecyclerView
-    private lateinit var contactAdapter: ContactAdapter
     private lateinit var contactListFromFile: List<ContactInfo>
     private lateinit var contactListFromBundle: List<ContactInfo>
+    private val contactAdapter by lazy { ContactAdapter(requireContext()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,19 +28,18 @@ class ContactsFragment : Fragment(R.layout.fragment_contacts) {
 
         (activity as AppCompatActivity).title = "Contacts"
 
-        contactID = requireArguments().getInt(CONTACT_ID)
         recyclerView = view.findViewById(R.id.recycler_view)
         contactListFromFile = readContactFromFile(requireContext())
         isBundleEmpty = requireArguments().getBundle(NEW_CONTACT_INFO)?.get(CONTACT_DETAILS_FRAGMENT_TAG) == null
 
-        // Gets contact info from contactListFromBundle
-        if (!isBundleEmpty) {
-            contactListFromBundle = requireArguments().getBundle(NEW_CONTACT_INFO)?.get(CONTACT_DETAILS_FRAGMENT_TAG) as List<ContactInfo>
-            contactAdapter = ContactAdapter(contactListFromBundle, requireContext())
+        // Gets contact info from file or bundle
+        if (isBundleEmpty) {
             recyclerView.adapter = contactAdapter
+            contactAdapter.setData(contactListFromFile)
         } else {
-            contactAdapter = ContactAdapter(contactListFromFile, requireContext())
+            contactListFromBundle = requireArguments().getBundle(NEW_CONTACT_INFO)?.get(CONTACT_DETAILS_FRAGMENT_TAG) as List<ContactInfo>
             recyclerView.adapter = contactAdapter
+            contactAdapter.setData(contactListFromBundle)
         }
     }
 
@@ -60,39 +58,37 @@ class ContactsFragment : Fragment(R.layout.fragment_contacts) {
             override fun onQueryTextChange(newText: String?): Boolean {
                 val searchList: ArrayList<ContactInfo> = arrayListOf()
 
-                if (isBundleEmpty) {
-                    contactListFromFile.forEach {
-                        if (it.name!!.lowercase().contains(newText!!.lowercase())) {
-                            searchList.add(it)
-                        }
-                    }
-                } else {
-                    contactListFromBundle.forEach {
-                        if (it.name!!.lowercase().contains(newText!!.lowercase())) {
-                            searchList.add(it)
+                fun search(contactList: List<ContactInfo>) {
+                    contactList.forEach { contact ->
+                        if (contact.name!!.lowercase().contains(newText!!.lowercase())
+                            || contact.lastName!!.lowercase().contains(newText.lowercase())) {
+                            searchList.add(contact)
                         }
                     }
                 }
 
-                if (searchList.isEmpty()) {
-                    Toast.makeText(activity, "No Data Found..", Toast.LENGTH_SHORT).show()
+                if (isBundleEmpty) {
+                    search(contactListFromFile)
                 } else {
-                    contactAdapter = ContactAdapter(searchList, requireContext())
+                    search(contactListFromBundle)
+                }
+
+                if (searchList.isEmpty()) {
+                    Toast.makeText(activity, "No data found...", Toast.LENGTH_SHORT).show()
+                } else {
                     recyclerView.adapter = contactAdapter
+                    contactAdapter.setData(searchList)
                 }
                 return false
             }
         })
 
-
     }
 
     companion object {
-        private const val CONTACT_ID = "CONTACT_ID"
         private const val NEW_CONTACT_INFO = "NEW_CONTACT_INFO"
-        fun newInstance(position: Int, bundle: Bundle) = ContactsFragment().also {
+        fun newInstance(bundle: Bundle) = ContactsFragment().also {
             it.arguments = Bundle().apply {
-                putInt(CONTACT_ID, position)
                 putBundle(NEW_CONTACT_INFO, bundle)
             }
         }

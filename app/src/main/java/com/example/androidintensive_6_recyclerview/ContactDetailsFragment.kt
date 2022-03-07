@@ -78,7 +78,7 @@ class ContactDetailsFragment: Fragment(R.layout.fragment_contact_details) {
                     }
                 }
                 val bundle = bundleOf(CONTACT_DETAILS_FRAGMENT_TAG to contactListToBundle)
-                saveButtonClickListener.onSaveButtonClicked(contactID, bundle)
+                saveButtonClickListener.onSaveButtonClicked(bundle)
             }
         }
     }
@@ -98,7 +98,7 @@ class ContactDetailsFragment: Fragment(R.layout.fragment_contact_details) {
     }
 
     interface SaveButtonClickListener {
-        fun onSaveButtonClicked(position: Int, bundle: Bundle)
+        fun onSaveButtonClicked(bundle: Bundle)
     }
 
     companion object {
