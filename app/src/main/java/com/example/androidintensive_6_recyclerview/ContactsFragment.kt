@@ -8,14 +8,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 
 class ContactsFragment : Fragment(R.layout.fragment_contacts) {
 
     private var isBundleEmpty: Boolean = false
     private lateinit var recyclerView: RecyclerView
-    private lateinit var contactListFromFile: List<ContactInfo>
-    private lateinit var contactListFromBundle: List<ContactInfo>
+    private lateinit var contactListFromFile: ArrayList<ContactInfo>
+    private lateinit var contactListFromBundle: ArrayList<ContactInfo>
     private val contactAdapter by lazy { ContactAdapter(requireContext()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,12 +33,18 @@ class ContactsFragment : Fragment(R.layout.fragment_contacts) {
         contactListFromFile = readContactFromFile(requireContext())
         isBundleEmpty = requireArguments().getBundle(NEW_CONTACT_INFO)?.get(CONTACT_DETAILS_FRAGMENT_TAG) == null
 
+       // Sets RecyclerView decoration
+        recyclerView.apply {
+            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+            addItemDecoration(ContactItemDecoration(requireContext()))
+        }
+
         // Gets contact info from file or bundle
         if (isBundleEmpty) {
             recyclerView.adapter = contactAdapter
             contactAdapter.setData(contactListFromFile)
         } else {
-            contactListFromBundle = requireArguments().getBundle(NEW_CONTACT_INFO)?.get(CONTACT_DETAILS_FRAGMENT_TAG) as List<ContactInfo>
+            contactListFromBundle = requireArguments().getBundle(NEW_CONTACT_INFO)?.get(CONTACT_DETAILS_FRAGMENT_TAG) as ArrayList<ContactInfo>
             recyclerView.adapter = contactAdapter
             contactAdapter.setData(contactListFromBundle)
         }

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="textview_style">
+    <style name="edit_textview_style">
         <item name="android:layout_marginStart">8dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:background">#FFFFFF</item>
     </style>
 </resources>

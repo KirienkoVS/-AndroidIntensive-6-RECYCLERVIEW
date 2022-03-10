@@ -2,13 +2,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="8dp"
-    android:padding="8dp"
-    android:background="@drawable/border"
-    android:elevation="4dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/contact_image_view"
@@ -57,7 +52,7 @@
         android:id="@+id/contact_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/textview_style"
+        android:layout_marginStart="8dp"
         tools:text="Xaviera"
         android:transitionName="name"
         app:layout_constraintStart_toEndOf="@id/contact_phoneNumber_view"
@@ -68,7 +63,7 @@
         android:id="@+id/contact_lastName_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/textview_style"
+        android:layout_marginStart="8dp"
         tools:text="Cleveland"
         android:transitionName="lastName"
         app:layout_constraintStart_toEndOf="@id/contact_phoneNumber_view"
@@ -79,7 +74,7 @@
         android:id="@+id/contact_phoneNumber_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/textview_style"
+        android:layout_marginStart="8dp"
         tools:text="01917-133441"
         android:transitionName="phoneNumber"
         app:layout_constraintStart_toEndOf="@id/contact_phoneNumber_view"

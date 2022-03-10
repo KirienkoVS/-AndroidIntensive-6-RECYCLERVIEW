@@ -2,6 +2,7 @@ package com.example.androidintensive_6_recyclerview
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,9 +17,9 @@ import com.bumptech.glide.Glide
 
 class ContactAdapter(private val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var contactList: MutableList<ContactInfo> = arrayListOf()
+    var contactList = arrayListOf<ContactInfo>()
+    private val contactToBundle = arrayListOf<ContactInfo>()
     private val contactClicked = context as ContactClicked
-    private val contactToBundle = mutableListOf<ContactInfo>()
 
     inner class ContactViewHolder (view: View) : RecyclerView.ViewHolder(view) {
         private val name: TextView = view.findViewById(R.id.contact_name_text)
@@ -71,10 +72,10 @@ class ContactAdapter(private val context: Context) : RecyclerView.Adapter<Recycl
         }
     }
 
-    fun setData(newContactList: List<ContactInfo>) {
+    fun setData(newContactList: ArrayList<ContactInfo>) {
         val diffUtil = ContactDiffUtil(contactList, newContactList)
         val diffResult = DiffUtil.calculateDiff(diffUtil)
-        contactList = newContactList as MutableList<ContactInfo>
+        contactList = newContactList
         diffResult.dispatchUpdatesTo(this)
     }
 
@@ -103,5 +104,16 @@ class ContactDiffUtil(
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         return oldList[oldItemPosition] == newList[newItemPosition]
     }
+}
 
+class ContactItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
+    private val marginTop = context.resources.getDimensionPixelOffset(R.dimen.margin_top)
+    private val marginBottom = context.resources.getDimensionPixelOffset(R.dimen.margin_bottom)
+    private val marginLeft = context.resources.getDimensionPixelOffset(R.dimen.margin_left)
+
+    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+        outRect.top = marginTop
+        outRect.bottom = marginBottom
+        outRect.left = marginLeft
+    }
 }
